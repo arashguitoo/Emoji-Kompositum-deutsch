@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Emoji-Kompositum Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .home-btn {
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: white;
+            border: 2px solid #667eea;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #667eea;
+            transition: all 0.3s;
+        }
+
+        .home-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .emoji-display {
+            text-align: center;
+            font-size: 5em;
+            margin: 40px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 15px;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .question {
+            text-align: center;
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .answers {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .answer-btn {
+            background: white;
+            border: 3px solid #667eea;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #333;
+            text-align: left;
+        }
+
+        .answer-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .answer-btn:active {
+            transform: translateY(0);
+        }
+
+        .answer-btn.correct {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+
+        .answer-btn.wrong {
+            background: #f44336;
+            border-color: #f44336;
+            color: white;
+        }
+
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .feedback.correct {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .feedback.wrong {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .next-btn {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .next-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .start-screen, .result-screen {
+            text-align: center;
+        }
+
+        .start-btn, .restart-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 20px 10px;
+            transition: all 0.3s;
+        }
+
+        .start-btn:hover, .restart-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .level-selector {
+            display: grid;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .level-btn {
+            padding: 15px;
+            border: 3px solid #667eea;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        .level-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .result-emoji {
+            font-size: 5em;
+            margin: 20px 0;
+        }
+
+        .score-display {
+            font-size: 2em;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .certificate {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 3px solid #ffa500;
+        }
+
+        .certificate-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #d4af37;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .emoji-display {
+                font-size: 4em;
+                margin: 30px 0;
+            }
+
+            .answer-btn {
+                font-size: 1em;
+                padding: 12px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="startScreen" class="start-screen">
+            <h1>🎯 Emoji-Kompositum Quiz</h1>
+            <p class="subtitle">Rate die deutschen zusammengesetzten Wörter!</p>
+            
+            <div class="level-selector">
+                <button class="level-btn" onclick="startGame('leicht')">
+                    ⭐ Leicht<br>
+                    <small>Einfache Komposita</small>
+                </button>
+                <button class="level-btn" onclick="startGame('mittel')">
+                    ⭐⭐ Mittel<br>
+                    <small>Mittelschwere Komposita</small>
+                </button>
+                <button class="level-btn" onclick="startGame('schwer')">
+                    ⭐⭐⭐ Schwer<br>
+                    <small>Knifflige Komposita</small>
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="hidden">
+            <div class="header">
+                <button class="home-btn" onclick="goHome()">🏠 Zurück</button>
+                <h1>🎯 Emoji-Kompositum Quiz</h1>
+                <div class="progress-bar">
+                    <div id="progressBar" class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">Frage</div>
+                    <div class="stat-value"><span id="currentQuestion">1</span>/<span id="totalQuestions">10</span></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Punkte</div>
+                    <div class="stat-value" id="score">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Richtig</div>
+                    <div class="stat-value" id="correct">0</div>
+                </div>
+            </div>
+
+            <div class="emoji-display" id="emojiDisplay">🏠 + 🐕</div>
+
+            <div class="question">Was ist gemeint?</div>
+
+            <div class="answers" id="answersContainer"></div>
+
+            <div id="feedbackContainer"></div>
+
+            <button id="nextBtn" class="next-btn hidden" onclick="nextQuestion()">Weiter →</button>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="resultScreen" class="result-screen hidden">
+            <button class="home-btn" onclick="goHome()" style="position: relative; margin-bottom: 20px;">🏠 Zurück</button>
+            <h1>Quiz beendet! 🎉</h1>
+            
+            <div class="result-emoji" id="resultEmoji">🏆</div>
+            
+            <div class="score-display">
+                <div><span id="finalScore">0</span> von <span id="finalTotal">10</span> Punkten</div>
+                <div style="font-size: 0.6em; color: #666; margin-top: 10px;">
+                    (<span id="percentage">0</span>%)
+                </div>
+            </div>
+
+            <div id="certificateContainer"></div>
+
+            <div>
+                <button class="restart-btn" onclick="location.reload()">🔄 Noch mal spielen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = {
+            leicht: [
+                {
+                    emojis: "🏠 + 🚪",
+                    correct: "die Haustür",
+                    wrong: ["die Zimmertür", "die Gartenpforte", "das Fenster"]
+                },
+                {
+                    emojis: "🌞 + 👓",
+                    correct: "die Sonnenbrille",
+                    wrong: ["die Lesebrille", "die Schutzbrille", "die Taucherbrille"]
+                },
+                {
+                    emojis: "❄️ + 👨",
+                    correct: "der Schneemann",
+                    wrong: ["der Eismann", "der Wintermann", "der Frostmann"]
+                },
+                {
+                    emojis: "🚗 + 🔑",
+                    correct: "der Autoschlüssel",
+                    wrong: ["der Türschlüssel", "der Motorschlüssel", "der Tankdeckel"]
+                },
+                {
+                    emojis: "🌙 + ✨",
+                    correct: "das Mondlicht",
+                    wrong: ["das Sternenlicht", "der Nachthimmel", "die Dunkelheit"]
+                },
+                {
+                    emojis: "🏫 + 📚",
+                    correct: "das Schulbuch",
+                    wrong: ["das Lehrbuch", "das Arbeitsbuch", "das Bilderbuch"]
+                },
+                {
+                    emojis: "🌲 + 🍯",
+                    correct: "der Waldhonig",
+                    wrong: ["der Blütenhonig", "der Bienenhonig", "der Berghonig"]
+                },
+                {
+                    emojis: "⚽ + 👟",
+                    correct: "der Fußballschuh",
+                    wrong: ["der Sportschuh", "der Laufschuh", "der Turnschuh"]
+                },
+                {
+                    emojis: "🎉 + 🎂",
+                    correct: "der Geburtstagskuchen",
+                    wrong: ["der Festtagskuchen", "das Partyessen", "die Torte"]
+                },
+                {
+                    emojis: "💧 + ☂️",
+                    correct: "der Regenschirm",
+                    wrong: ["der Sonnenschirm", "der Wetterschutz", "das Dach"]
+                },
+                {
+                    emojis: "🎄 + 🎁",
+                    correct: "das Weihnachtsgeschenk",
+                    wrong: ["das Geburtstagsgeschenk", "der Tannenbaum", "die Winterdeko"]
+                },
+                {
+                    emojis: "🍎 + 🥧",
+                    correct: "der Apfelkuchen",
+                    wrong: ["der Obstkuchen", "die Apfeltorte", "der Pflaumenkuchen"]
+                },
+                {
+                    emojis: "⭐ + 🌌",
+                    correct: "der Sternenhimmel",
+                    wrong: ["der Nachthimmel", "das Weltall", "die Milchstraße"]
+                }
+            ],
+            mittel: [
+                {
+                    emojis: "✋ + 👜",
+                    correct: "die Handtasche",
+                    wrong: ["die Einkaufstasche", "die Reisetasche", "die Umhängetasche"]
+                },
+                {
+                    emojis: "🌊 + 🏖️",
+                    correct: "der Meeresstrand",
+                    wrong: ["der Sandstrand", "das Flussufer", "der Badestrand"]
+                },
+                {
+                    emojis: "🔥 + 🚗",
+                    correct: "das Feuerwehrauto",
+                    wrong: ["das Löschfahrzeug", "der Notfallwagen", "der Rettungswagen"]
+                },
+                {
+                    emojis: "🌸 + 🏡",
+                    correct: "der Blumengarten",
+                    wrong: ["der Rosengarten", "der Vorgarten", "der Gemüsegarten"]
+                },
+                {
+                    emojis: "🎵 + 📻",
+                    correct: "der Musiksender",
+                    wrong: ["der Radiosender", "der Lautsprecher", "die Musikbox"]
+                },
+                {
+                    emojis: "🏔️ + 🥾",
+                    correct: "der Bergschuh",
+                    wrong: ["der Wanderschuh", "der Skistiefel", "der Kletterschuh"]
+                },
+                {
+                    emojis: "📰 + 📝",
+                    correct: "der Zeitungsartikel",
+                    wrong: ["der Nachrichtenbericht", "die Pressemitteilung", "die Zeitschrift"]
+                },
+                {
+                    emojis: "🧀 + 🍞",
+                    correct: "das Käsebrot",
+                    wrong: ["das Butterbrot", "das Sandwich", "das Brötchen"]
+                },
+                {
+                    emojis: "🌳 + 🍂",
+                    correct: "das Baumblatt",
+                    wrong: ["das Herbstblatt", "der Laubbaum", "das Waldblatt"]
+                },
+                {
+                    emojis: "🚲 + 🛣️",
+                    correct: "der Fahrradweg",
+                    wrong: ["der Radweg", "die Fahrradstraße", "der Gehweg"]
+                },
+                {
+                    emojis: "🍞 + 🔪",
+                    correct: "das Brotmesser",
+                    wrong: ["das Küchenmesser", "das Schneidemesser", "der Brotschneider"]
+                }
+            ],
+            schwer: [
+                {
+                    emojis: "👁️ + 👩‍⚕️",
+                    correct: "der Augenarzt",
+                    wrong: ["der Augenoptiker", "der Hausarzt", "der Spezialist"]
+                },
+                {
+                    emojis: "🚪 + 🔔",
+                    correct: "die Türklingel",
+                    wrong: ["die Türglocke", "die Hausklingel", "die Torglocke"]
+                },
+                {
+                    emojis: "💼 + ✈️",
+                    correct: "die Geschäftsreise",
+                    wrong: ["der Urlaubsflug", "die Urlaubsreise", "die Flugreise"]
+                },
+                {
+                    emojis: "🧠 + 💡",
+                    correct: "der Geistesblitz",
+                    wrong: ["die Ideenlampe", "der Gedankenfunke", "die Erleuchtung"]
+                },
+                {
+                    emojis: "🏃 + ⏰",
+                    correct: "die Laufzeit",
+                    wrong: ["die Jogguhr", "die Trainingszeit", "die Sportzeit"]
+                },
+                {
+                    emojis: "📖 + 🐛",
+                    correct: "der Bücherwurm",
+                    wrong: ["die Leseratte", "der Papierkäfer", "der Lesewurm"]
+                },
+                {
+                    emojis: "🔊 + 💬",
+                    correct: "der Lautsprecher",
+                    wrong: ["der Hörer", "das Mikrofon", "die Telefonbox"]
+                },
+                {
+                    emojis: "🏠 + 🔑",
+                    correct: "der Hausschlüssel",
+                    wrong: ["der Wohnungsschlüssel", "der Türschlüssel", "der Heimschlüssel"]
+                },
+                {
+                    emojis: "🌍 + 💳",
+                    correct: "die Weltkarte",
+                    wrong: ["die Landkarte", "die Globuskarte", "der Atlas"]
+                },
+                {
+                    emojis: "🤧 + 🚗",
+                    correct: "der Krankenwagen",
+                    wrong: ["das Rettungsauto", "der Notarztwagen", "das Sanitätsauto"]
+                },
+                {
+                    emojis: "🏗️ + 👷",
+                    correct: "der Bauarbeiter",
+                    wrong: ["der Handwerker", "der Architekt", "der Ingenieur"]
+                }
+            ]
+        };
+
+        let currentLevel = 'leicht';
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let answered = false;
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function goHome() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        function startGame(level) {
+            currentLevel = level;
+            currentQuestions = shuffleArray([...questions[level]]).slice(0, 10);
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            answered = false;
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('totalQuestions').textContent = currentQuestions.length;
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= currentQuestions.length) {
+                showResults();
+                return;
+            }
+
+            answered = false;
+            const question = currentQuestions[currentQuestionIndex];
+            
+            document.getElementById('emojiDisplay').textContent = question.emojis;
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('progressBar').style.width = ((currentQuestionIndex / currentQuestions.length) * 100) + '%';
+            
+            // Create answer buttons
+            const allAnswers = [question.correct, ...question.wrong];
+            const shuffledAnswers = shuffleArray(allAnswers);
+            
+            const container = document.getElementById('answersContainer');
+            container.innerHTML = '';
+            
+            shuffledAnswers.forEach(answer => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = answer;
+                btn.onclick = () => checkAnswer(answer, question.correct);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('feedbackContainer').innerHTML = '';
+            document.getElementById('nextBtn').classList.add('hidden');
+        }
+
+        function checkAnswer(selected, correct) {
+            if (answered) return;
+            answered = true;
+
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correct) {
+                    btn.classList.add('correct');
+                }
+                if (btn.textContent === selected && selected !== correct) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback';
+
+            if (selected === correct) {
+                score++;
+                correctAnswers++;
+                feedback.classList.add('correct');
+                feedback.textContent = '✅ Richtig! Sehr gut!';
+            } else {
+                feedback.classList.add('wrong');
+                feedback.textContent = `❌ Leider falsch. Die richtige Antwort ist: ${correct}`;
+            }
+
+            feedbackContainer.appendChild(feedback);
+            document.getElementById('score').textContent = score;
+            document.getElementById('correct').textContent = correctAnswers;
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function showResults() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            const totalQuestions = currentQuestions.length;
+            const percentage = Math.round((score / totalQuestions) * 100);
+
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalTotal').textContent = totalQuestions;
+            document.getElementById('percentage').textContent = percentage;
+
+            // Result emoji
+            let resultEmoji = '🏆';
+            if (percentage === 100) resultEmoji = '🏆🌟';
+            else if (percentage >= 80) resultEmoji = '🏆';
+            else if (percentage >= 60) resultEmoji = '😊';
+            else if (percentage >= 40) resultEmoji = '👍';
+            else resultEmoji = '📚';
+
+            document.getElementById('resultEmoji').textContent = resultEmoji;
+
+            // Certificate
+            if (percentage >= 70) {
+                const certificate = document.createElement('div');
+                certificate.className = 'certificate';
+                certificate.innerHTML = `
+                    <div class="certificate-title">🎖️ Zertifikat 🎖️</div>
+                    <div>Du hast ${percentage}% richtig beantwortet!</div>
+                    <div style="margin-top: 10px; font-weight: bold;">
+                        ${percentage >= 90 ? 'Ausgezeichnet! 🌟' : 'Sehr gut gemacht! 👏'}
+                    </div>
+                `;
+                document.getElementById('certificateContainer').appendChild(certificate);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Game starts with start screen visible
+        });
+    </script>
+</body>
+</html>
